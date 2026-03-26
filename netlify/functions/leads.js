@@ -1,82 +1,42 @@
-const { Client } = require('pg');
+// netlify/functions/leads.js
+// POST: crear lead | GET: listar leads del usuario
+const { getDb, getUser, calcTax, generateFolio, cors } = require('./_db');
 
-exports.handler = async (event, context) => {
-  // Solo permitir peticiones POST
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
+exports.handler = async (event) => {
+  if (event.httpMethod === 'OPTIONS') return cors({});
+
+  const userId = parseInt(event.headers['x-user-id']);
+  if (!userId) return cors({ error: 'No autorizado' }, 401);
+
+  const user = await getUser(userId);
+  if (!user) return cors({ error: 'Usuario no encontrado' }, 404);
+
+  const sql = getDb();
+
+  if (event.httpMethod === 'POST') {
+    try {
+      const { nom, dir, mon, prio, desc } = JSON.parse(event.body || '{}');
+      if (!nom || !dir || !mon) return cors({ error: 'Datos incompletos' }, 400);
+
+      const { tax, neto } = calcTax(parseFloat(mon));
+      const folio = generateFolio();
+
+      const rows = await sql`
+        INSERT INTO leads (created_by, nom, dir, mon, tax, neto, prio, desc, folio)
+        VALUES (${userId}, ${nom}, ${dir}, ${parseFloat(mon)}, ${tax}, ${neto}, ${prio||''}, ${desc||''}, ${folio})
+        RETURNING *
+      `;
+
+      return cors({ lead: {
+        id: rows[0].id, nom, dir,
+        mon: parseFloat(mon), tax, neto,
+        prio: prio||'', desc: desc||'', folio
+      }});
+    } catch(e) {
+      console.error('leads POST error:', e);
+      return cors({ error: 'Error al crear lead' }, 500);
+    }
   }
 
-  const client = new Client({
-    connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
-  });
-
-  try {
-    const data = JSON.parse(event.body);
-    
-    // Validar que los datos básicos existan
-    if (!data.nom || !data.folio || !data.userId) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: 'Faltan campos obligatorios (Nombre, Folio o ID de usuario)' })
-      };
-    }
-
-    await client.connect();
-
-    // Query corregida usando "descripcion" en lugar de "desc"
-    const query = `
-      INSERT INTO leads (
-        created_by, 
-        nom, 
-        dir, 
-        mon, 
-        tax, 
-        neto, 
-        prio, 
-        descripcion, 
-        folio
-      )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-      RETURNING *
-    `;
-
-    const values = [
-      data.userId,
-      data.nom,
-      data.dir || '',
-      data.mon || 0,
-      data.tax || 0,
-      data.neto || 0,
-      data.prio || 'Normal',
-      data.desc || '', // Aquí recibimos "desc" del formulario pero lo guardamos en "descripcion"
-      data.folio
-    ];
-
-    const res = await client.query(query, values);
-    
-    return {
-      statusCode: 201,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(res.rows[0])
-    };
-
-  } catch (err) {
-    console.error('ERROR EN LEADS:', err);
-    
-    // Si el error es por Folio duplicado
-    if (err.code === '23505') {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: 'El número de Folio ya existe. Usa uno diferente.' })
-      };
-    }
-
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'Error interno del servidor', details: err.message })
-    };
-  } finally {
-    await client.end();
-  }
+  return cors({ error: 'Método no permitido' }, 405);
 };
