@@ -1,0 +1,35 @@
+# netlify.toml
+# ══════════════════════════════════════════════════════════
+# AMIRA AL DAHAB — Configuración Netlify
+# ══════════════════════════════════════════════════════════
+
+[build]
+  publish   = "."                        # El index.html está en la raíz
+  functions = "netlify/functions"        # Carpeta de las functions
+
+[functions]
+  node_bundler = "esbuild"               # Bundler más rápido
+
+# ── Redirects: las funciones se acceden como /api/* ──────
+[[redirects]]
+  from   = "/api/*"
+  to     = "/.netlify/functions/:splat"
+  status = 200
+
+# ── SPA fallback ─────────────────────────────────────────
+[[redirects]]
+  from   = "/*"
+  to     = "/index.html"
+  status = 200
+
+# ── Variables de entorno (se sobreescriben en Netlify UI) ─
+# Ve a: Site settings → Environment variables
+# y agrega: DATABASE_URL = postgresql://user:pass@ep-xxx.neon.tech/neondb?sslmode=require
+
+# ── Headers de seguridad ─────────────────────────────────
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options        = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy        = "strict-origin-when-cross-origin"

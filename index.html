@@ -1,0 +1,2375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>AMIRA AL DAHAB | Sistema Administrativo</title>
+  <meta name="theme-color" content="#B8860B">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Montserrat:wght@300;400;500;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ═══════════════════════════════════════════════
+       VARIABLES GLOBALES
+    ═══════════════════════════════════════════════ */
+    :root {
+      --gold: #B8860B;
+      --gold-dark: #946b09;
+      --gold-light: #d4af37;
+      --gold-glow: rgba(184,134,11,0.18);
+      --white: #ffffff;
+      --bg: #f5f6fa;
+      --card-bg: #ffffff;
+      --text: #1a2332;
+      --text-light: #7f8c9a;
+      --border: #e8eaed;
+      --success: #1a9c5b;
+      --success-bg: rgba(26,156,91,0.08);
+      --danger: #e63946;
+      --danger-bg: rgba(230,57,70,0.08);
+      --warning: #f39c12;
+      --warning-bg: rgba(243,156,18,0.08);
+      --info: #3498db;
+      --shadow-xs: 0 1px 3px rgba(0,0,0,0.04);
+      --shadow-sm: 0 4px 12px rgba(0,0,0,0.06);
+      --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
+      --shadow-lg: 0 20px 60px rgba(0,0,0,0.12);
+      --radius: 16px;
+      --radius-sm: 10px;
+      --transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+      --sidebar-w: 270px;
+      --bottom-nav-h: 70px;
+    }
+
+    /* ═══════════════════════════════════════════════
+       RESET
+    ═══════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: 100%; }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100dvh;
+      overflow: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ═══════════════════════════════════════════════
+       FONDO
+    ═══════════════════════════════════════════════ */
+    .bg-pattern {
+      position: fixed; inset: 0; z-index: -1;
+      background:
+        radial-gradient(ellipse at 80% 10%, rgba(184,134,11,0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 20% 90%, rgba(184,134,11,0.04) 0%, transparent 40%);
+    }
+
+    /* ═══════════════════════════════════════════════
+       LOGIN SCREEN
+    ═══════════════════════════════════════════════ */
+    #loginScreen {
+      height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .login-wrap {
+      width: 100%;
+      max-width: 400px;
+      animation: slideUp 0.5s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    .login-logo {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .login-logo-icon {
+      width: 72px; height: 72px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      color: white;
+      box-shadow: 0 12px 30px var(--gold-glow);
+      margin-bottom: 16px;
+    }
+
+    .login-logo h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.8rem;
+      color: var(--gold);
+      letter-spacing: 3px;
+      line-height: 1;
+    }
+
+    .login-logo p {
+      font-size: 0.65rem;
+      letter-spacing: 4px;
+      color: var(--text-light);
+      text-transform: uppercase;
+      margin-top: 6px;
+    }
+
+    .login-card {
+      background: var(--white);
+      border-radius: 24px;
+      padding: 36px 32px;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid rgba(184,134,11,0.1);
+    }
+
+    .login-card h2 {
+      font-size: 1rem;
+      color: var(--text-light);
+      font-weight: 500;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .pin-dots {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .pin-dot {
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      transition: var(--transition);
+    }
+
+    .pin-dot.filled {
+      background: var(--gold);
+      border-color: var(--gold);
+      transform: scale(1.15);
+    }
+
+    .pin-keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .pin-key {
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pin-key:active { transform: scale(0.93); background: var(--gold-glow); border-color: var(--gold); }
+    .pin-key span.letters { font-size: 0.5rem; color: var(--text-light); letter-spacing: 1px; font-weight: 700; }
+    .pin-key.del { color: var(--danger); }
+    .pin-key.enter { background: var(--gold); color: white; border-color: var(--gold); font-size: 1rem; }
+    .pin-key.enter:active { background: var(--gold-dark); }
+
+    .login-switch {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .login-switch a {
+      color: var(--gold);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    /* Formulario registro */
+    .reg-form { display: none; }
+    .reg-form.active { display: block; }
+    .login-pin-mode { display: block; }
+    .login-pin-mode.hidden { display: none; }
+
+    /* ═══════════════════════════════════════════════
+       APP CONTAINER
+    ═══════════════════════════════════════════════ */
+    #app {
+      display: none;
+      height: 100dvh;
+    }
+
+    #app.active {
+      display: grid;
+      grid-template-columns: var(--sidebar-w) 1fr;
+    }
+
+    /* ═══════════════════════════════════════════════
+       SIDEBAR (PC)
+    ═══════════════════════════════════════════════ */
+    .sidebar {
+      background: var(--white);
+      border-right: 1px solid var(--border);
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .sidebar-top {
+      padding: 28px 20px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .sidebar-brand-icon {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .sidebar-brand h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      color: var(--gold);
+      letter-spacing: 1px;
+      line-height: 1.2;
+    }
+
+    .sidebar-brand p {
+      font-size: 0.6rem;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-top: 2px;
+    }
+
+    /* User badge en sidebar */
+    .user-badge {
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-avatar {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.8rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .user-info { overflow: hidden; }
+    .user-info strong { display: block; font-size: 0.78rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .user-info span { font-size: 0.62rem; color: var(--text-light); }
+
+    .role-badge {
+      margin-left: auto;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 0.55rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      flex-shrink: 0;
+    }
+
+    .role-admin { background: rgba(184,134,11,0.15); color: var(--gold-dark); }
+    .role-member { background: rgba(52,152,219,0.12); color: #2980b9; }
+
+    /* NAV */
+    .sidebar-nav {
+      flex: 1;
+      padding: 16px 14px;
+      overflow-y: auto;
+    }
+
+    .nav-section-label {
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-light);
+      padding: 0 8px;
+      margin: 16px 0 8px;
+    }
+
+    .nav-section-label:first-child { margin-top: 0; }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 12px;
+      border-radius: var(--radius-sm);
+      color: var(--text-light);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.82rem;
+      transition: var(--transition);
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+      position: relative;
+    }
+
+    .nav-link i { font-size: 1rem; min-width: 20px; text-align: center; }
+
+    .nav-link:hover { background: var(--bg); color: var(--text); }
+
+    .nav-link.active {
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      color: white;
+      box-shadow: 0 4px 14px var(--gold-glow);
+    }
+
+    .nav-link .badge {
+      margin-left: auto;
+      background: var(--danger);
+      color: white;
+      border-radius: 20px;
+      padding: 1px 7px;
+      font-size: 0.6rem;
+      font-weight: 700;
+    }
+
+    .nav-link.active .badge { background: rgba(255,255,255,0.3); }
+
+    /* Sidebar bottom */
+    .sidebar-bottom {
+      padding: 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    .btn-logout {
+      width: 100%;
+      padding: 10px 16px;
+      background: var(--danger-bg);
+      color: var(--danger);
+      border: 1.5px solid rgba(230,57,70,0.2);
+      border-radius: var(--radius-sm);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: var(--transition);
+    }
+
+    .btn-logout:hover { background: var(--danger); color: white; }
+
+    /* ═══════════════════════════════════════════════
+       MAIN CONTENT
+    ═══════════════════════════════════════════════ */
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    /* Header top bar */
+    .topbar {
+      padding: 16px 28px;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .topbar h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.1rem;
+      color: var(--text);
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .page-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px 28px;
+      scroll-behavior: smooth;
+    }
+
+    /* Custom scrollbar */
+    .page-area::-webkit-scrollbar { width: 5px; }
+    .page-area::-webkit-scrollbar-track { background: transparent; }
+    .page-area::-webkit-scrollbar-thumb { background: rgba(184,134,11,0.25); border-radius: 4px; }
+
+    /* ═══════════════════════════════════════════════
+       TABS
+    ═══════════════════════════════════════════════ */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeUp 0.3s ease; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ═══════════════════════════════════════════════
+       STATS GRID
+    ═══════════════════════════════════════════════ */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 20px;
+      border: 1px solid var(--border);
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    }
+
+    .stat-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+
+    .stat-card .stat-icon {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      background: var(--gold-glow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+    }
+
+    .stat-card .stat-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-light);
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .stat-card .stat-value {
+      font-family: 'Cinzel', serif;
+      font-size: 1.6rem;
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    /* ═══════════════════════════════════════════════
+       CARDS
+    ═══════════════════════════════════════════════ */
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 22px;
+      border: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-title i { color: var(--gold); }
+
+    /* Dual column layout */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    /* ═══════════════════════════════════════════════
+       ITEMS / LISTAS
+    ═══════════════════════════════════════════════ */
+    .item-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .item {
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-left: 4px solid var(--gold);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: var(--transition);
+      cursor: pointer;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    .item:active { transform: scale(0.99); }
+    .item:hover { border-color: var(--gold); box-shadow: var(--shadow-sm); background: var(--white); }
+    .item.priority-high { border-left-color: var(--danger); }
+    .item.done { border-left-color: var(--success); }
+
+    .item-icon {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      background: var(--gold-glow);
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    .item-body { flex: 1; min-width: 0; }
+    .item-body strong { display: block; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .item-body small { font-size: 0.72rem; color: var(--text-light); display: block; margin-top: 2px; }
+
+    .item-right { text-align: right; flex-shrink: 0; }
+    .item-right .amount { font-weight: 700; color: var(--success); font-size: 1rem; }
+    .item-right small { font-size: 0.68rem; color: var(--text-light); }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-light);
+    }
+
+    .empty-state i { font-size: 2.5rem; margin-bottom: 12px; display: block; opacity: 0.4; }
+    .empty-state p { font-size: 0.85rem; }
+
+    /* ═══════════════════════════════════════════════
+       FORMULARIOS
+    ═══════════════════════════════════════════════ */
+    .form-group { margin-bottom: 16px; }
+
+    .form-group label {
+      display: block;
+      font-weight: 700;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-light);
+      margin-bottom: 7px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--bg);
+      outline: none;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text);
+      transition: var(--transition);
+      -webkit-appearance: none;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--gold);
+      background: var(--white);
+      box-shadow: 0 0 0 3px var(--gold-glow);
+    }
+
+    textarea { resize: vertical; min-height: 90px; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    /* ═══════════════════════════════════════════════
+       BOTONES
+    ═══════════════════════════════════════════════ */
+    .btn {
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 11px 22px;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      color: white;
+      box-shadow: 0 4px 14px var(--gold-glow);
+    }
+
+    .btn-gold:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(184,134,11,0.3); }
+    .btn-gold:active { transform: scale(0.97); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-light);
+      border: 1.5px solid var(--border);
+    }
+
+    .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+
+    .btn-success { background: var(--success); color: white; }
+    .btn-success:hover { background: #15834c; }
+
+    .btn-danger { background: var(--danger); color: white; }
+    .btn-danger:hover { background: #c1121f; }
+
+    .btn-sm { padding: 7px 14px; font-size: 0.72rem; }
+    .btn-full { width: 100%; }
+    .btn-icon-only { padding: 9px 11px; border-radius: 8px; }
+
+    /* ═══════════════════════════════════════════════
+       MODAL
+    ═══════════════════════════════════════════════ */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      backdrop-filter: blur(4px);
+      padding: 16px;
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal-box {
+      background: var(--white);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: var(--shadow-lg);
+      animation: slideUp 0.3s cubic-bezier(0.4,0,0.2,1);
+      max-height: 90dvh;
+      overflow-y: auto;
+    }
+
+    .modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 22px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-head h3 {
+      font-family: 'Cinzel', serif;
+      color: var(--gold);
+      font-size: 1rem;
+    }
+
+    .modal-close-btn {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      border: none;
+      background: var(--bg);
+      color: var(--text-light);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+
+    .modal-close-btn:hover { background: var(--border); color: var(--text); }
+
+    .modal-body { padding: 20px 22px; }
+    .modal-footer { padding: 0 22px 20px; display: flex; gap: 10px; }
+    .modal-footer .btn { flex: 1; }
+
+    /* ═══════════════════════════════════════════════
+       DESGLOSE FISCAL (dentro del modal)
+    ═══════════════════════════════════════════════ */
+    .fiscal-breakdown {
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      margin: 14px 0;
+    }
+
+    .fiscal-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      font-size: 0.85rem;
+    }
+
+    .fiscal-row + .fiscal-row { border-top: 1px solid var(--border); }
+
+    .fiscal-row.total {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--success);
+      padding-top: 10px;
+      margin-top: 4px;
+    }
+
+    /* ═══════════════════════════════════════════════
+       ALERTAS TOAST
+    ═══════════════════════════════════════════════ */
+    #toastContainer {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .toast {
+      background: var(--white);
+      border-radius: var(--radius-sm);
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: var(--shadow-lg);
+      border-left: 4px solid var(--gold);
+      pointer-events: all;
+      animation: toastIn 0.35s cubic-bezier(0.4,0,0.2,1);
+      min-width: 260px;
+      max-width: 360px;
+    }
+
+    .toast.success { border-left-color: var(--success); }
+    .toast.danger  { border-left-color: var(--danger);  }
+    .toast.warning { border-left-color: var(--warning); }
+
+    .toast i { font-size: 1.1rem; flex-shrink: 0; }
+    .toast.success i { color: var(--success); }
+    .toast.danger  i { color: var(--danger);  }
+    .toast.warning i { color: var(--warning); }
+    .toast:not(.success):not(.danger):not(.warning) i { color: var(--gold); }
+
+    .toast span { font-size: 0.82rem; font-weight: 600; color: var(--text); }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateX(20px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ═══════════════════════════════════════════════
+       ÁRBOL DE AFILIADOS
+    ═══════════════════════════════════════════════ */
+    .team-tree { padding: 8px 0; }
+
+    .tree-node {
+      margin-bottom: 6px;
+    }
+
+    .tree-member {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      transition: var(--transition);
+      cursor: default;
+    }
+
+    .tree-member:hover { border-color: var(--gold); box-shadow: var(--shadow-xs); }
+
+    .tree-member .tm-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .tree-member.depth-1 .tm-avatar { background: linear-gradient(135deg, #3498db, #5dade2); }
+    .tree-member.depth-2 .tm-avatar { background: linear-gradient(135deg, var(--success), #58d68d); }
+    .tree-member.depth-3 .tm-avatar { background: linear-gradient(135deg, var(--warning), #f8c471); }
+
+    .tree-member .tm-info { flex: 1; min-width: 0; }
+    .tree-member .tm-info strong { font-size: 0.82rem; display: block; }
+    .tree-member .tm-info small { font-size: 0.68rem; color: var(--text-light); }
+
+    .tree-member .tm-meta { text-align: right; font-size: 0.7rem; color: var(--text-light); }
+    .tree-member .tm-meta strong { color: var(--gold); display: block; }
+
+    .tree-children {
+      padding-left: 28px;
+      margin-top: 4px;
+      border-left: 2px dashed rgba(184,134,11,0.2);
+      margin-left: 16px;
+    }
+
+    /* Invite card */
+    .invite-card {
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      border-radius: var(--radius);
+      padding: 20px;
+      color: white;
+      margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .invite-card::after {
+      content: '\f0c1';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      position: absolute;
+      right: -10px;
+      bottom: -15px;
+      font-size: 5rem;
+      opacity: 0.1;
+    }
+
+    .invite-card h3 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.85; margin-bottom: 8px; }
+    .invite-card .invite-code { font-family: 'Cinzel', serif; font-size: 1.6rem; letter-spacing: 4px; font-weight: 700; }
+    .invite-card .invite-url {
+      background: rgba(255,255,255,0.2);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 0.72rem;
+      margin: 12px 0;
+      word-break: break-all;
+      font-family: monospace;
+    }
+
+    .invite-card .invite-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .invite-card .btn-invite-action {
+      background: rgba(255,255,255,0.25);
+      color: white;
+      border: 1.5px solid rgba(255,255,255,0.4);
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'Montserrat', sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition);
+    }
+
+    .invite-card .btn-invite-action:hover { background: rgba(255,255,255,0.4); }
+
+    /* ═══════════════════════════════════════════════
+       FIRMA
+    ═══════════════════════════════════════════════ */
+    .signature-preview {
+      text-align: center;
+      padding: 30px 20px;
+      border: 2px dashed rgba(184,134,11,0.3);
+      border-radius: var(--radius);
+      background: var(--bg);
+      margin: 16px 0;
+    }
+
+    .signature-preview .sig-text {
+      font-family: 'Dancing Script', cursive;
+      font-size: 3rem;
+      color: var(--gold);
+      line-height: 1.2;
+    }
+
+    .signature-preview small { display: block; font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; color: var(--text-light); margin-top: 8px; }
+
+    /* ═══════════════════════════════════════════════
+       CALCULADORA FISCAL
+    ═══════════════════════════════════════════════ */
+    .calc-result {
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      border-left: 4px solid var(--gold);
+      margin-top: 16px;
+      min-height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .calc-result.has-result { display: block; }
+
+    /* ═══════════════════════════════════════════════
+       BOTTOM NAV (MÓVIL)
+    ═══════════════════════════════════════════════ */
+    #bottomNav {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0; right: 0;
+      z-index: 900;
+      background: var(--white);
+      border-top: 1px solid var(--border);
+      padding: 8px 4px;
+      padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.07);
+    }
+
+    .bn-inner {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    .bn-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      padding: 6px 8px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      color: var(--text-light);
+      font-size: 0.55rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: var(--transition);
+      border: none;
+      background: transparent;
+      flex: 1;
+    }
+
+    .bn-item i { font-size: 1.15rem; line-height: 1; }
+
+    .bn-item.active { color: var(--gold); }
+    .bn-item.active i { filter: drop-shadow(0 2px 4px var(--gold-glow)); }
+    .bn-item.bn-danger { color: var(--danger); }
+    .bn-item.bn-danger.active { color: var(--danger); }
+
+    /* ═══════════════════════════════════════════════
+       MOBILE HEADER
+    ═══════════════════════════════════════════════ */
+    #mobileHeader {
+      display: none;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 16px;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .mobile-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .mobile-brand-icon {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.75rem;
+    }
+
+    .mobile-brand span {
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      color: var(--gold);
+      letter-spacing: 1px;
+    }
+
+    .mobile-user-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* ═══════════════════════════════════════════════
+       LOADING SPINNER
+    ═══════════════════════════════════════════════ */
+    .spinner {
+      display: inline-block;
+      width: 18px; height: 18px;
+      border: 2.5px solid rgba(255,255,255,0.4);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-overlay {
+      position: fixed; inset: 0;
+      background: rgba(255,255,255,0.85);
+      z-index: 9998;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(2px);
+    }
+
+    .loading-overlay .spinner {
+      width: 36px; height: 36px;
+      border-color: var(--gold-glow);
+      border-top-color: var(--gold);
+    }
+
+    /* ═══════════════════════════════════════════════
+       RESPONSIVE — MÓVIL
+    ═══════════════════════════════════════════════ */
+    @media (max-width: 768px) {
+      #app.active {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar { display: none !important; }
+
+      #mobileHeader { display: flex; }
+      #bottomNav { display: block; }
+
+      .topbar { display: none; }
+
+      .main-content {
+        height: 100dvh;
+      }
+
+      .page-area {
+        padding: 16px;
+        padding-bottom: calc(var(--bottom-nav-h) + 16px + env(safe-area-inset-bottom, 0px));
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .two-col { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+
+      .card { padding: 16px; }
+
+      #toastContainer {
+        top: auto;
+        bottom: calc(var(--bottom-nav-h) + 12px);
+        right: 12px;
+        left: 12px;
+        align-items: flex-end;
+      }
+
+      .tree-children { padding-left: 16px; margin-left: 10px; }
+    }
+
+    @media (max-width: 480px) {
+      .stats-grid { grid-template-columns: 1fr; gap: 10px; }
+      .stat-card .stat-value { font-size: 1.3rem; }
+
+      .item { padding: 12px; }
+      .item-icon { width: 30px; height: 30px; font-size: 0.75rem; }
+    }
+
+    /* Laptop ajuste */
+    @media (min-width: 769px) and (max-width: 1100px) {
+      :root { --sidebar-w: 220px; }
+      .sidebar-brand h1 { font-size: 0.75rem; }
+      .nav-link { font-size: 0.78rem; padding: 10px 10px; }
+      .page-area { padding: 18px 20px; }
+      .stats-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    }
+
+    /* Canvas hidden */
+    #ticketCanvas { display: none; }
+
+    /* Indicador de profundidad en árbol */
+    .depth-badge {
+      font-size: 0.58rem;
+      padding: 2px 7px;
+      border-radius: 20px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .depth-0 { background: var(--gold-glow); color: var(--gold-dark); }
+    .depth-1 { background: rgba(52,152,219,0.12); color: #2980b9; }
+    .depth-2 { background: rgba(26,156,91,0.12); color: #15834c; }
+    .depth-3 { background: var(--warning-bg); color: #d68910; }
+  </style>
+</head>
+<body>
+
+<div class="bg-pattern"></div>
+<div id="toastContainer"></div>
+<canvas id="ticketCanvas" width="800" height="1100"></canvas>
+
+<!-- ════════════════════════════════════════
+     LOGIN SCREEN
+════════════════════════════════════════ -->
+<div id="loginScreen">
+  <div class="login-wrap">
+    <div class="login-logo">
+      <div class="login-logo-icon"><i class="fas fa-crown"></i></div>
+      <h1>AMIRA AL DAHAB</h1>
+      <p>Sistema Administrativo</p>
+    </div>
+
+    <!-- Modo PIN -->
+    <div class="login-card" id="loginPinMode">
+      <h2 id="loginTitle">Ingresa tu PIN de acceso</h2>
+
+      <div class="pin-dots">
+        <div class="pin-dot" id="pd0"></div>
+        <div class="pin-dot" id="pd1"></div>
+        <div class="pin-dot" id="pd2"></div>
+        <div class="pin-dot" id="pd3"></div>
+      </div>
+
+      <div class="pin-keypad">
+        <button class="pin-key" onclick="app.pinKey('1')">1<span class="letters"></span></button>
+        <button class="pin-key" onclick="app.pinKey('2')">2<span class="letters">ABC</span></button>
+        <button class="pin-key" onclick="app.pinKey('3')">3<span class="letters">DEF</span></button>
+        <button class="pin-key" onclick="app.pinKey('4')">4<span class="letters">GHI</span></button>
+        <button class="pin-key" onclick="app.pinKey('5')">5<span class="letters">JKL</span></button>
+        <button class="pin-key" onclick="app.pinKey('6')">6<span class="letters">MNO</span></button>
+        <button class="pin-key" onclick="app.pinKey('7')">7<span class="letters">PQRS</span></button>
+        <button class="pin-key" onclick="app.pinKey('8')">8<span class="letters">TUV</span></button>
+        <button class="pin-key" onclick="app.pinKey('9')">9<span class="letters">WXYZ</span></button>
+        <button class="pin-key del" onclick="app.pinClear()"><i class="fas fa-rotate-left"></i></button>
+        <button class="pin-key" onclick="app.pinKey('0')">0</button>
+        <button class="pin-key enter" onclick="app.pinSubmit()"><i class="fas fa-arrow-right"></i></button>
+      </div>
+
+      <div class="login-switch">
+        <a onclick="app.showRegisterMode()">¿Tienes código de invitación? Regístrate →</a>
+      </div>
+    </div>
+
+    <!-- Modo Registro -->
+    <div class="login-card" id="loginRegMode" style="display:none;">
+      <h2>Crear cuenta nueva</h2>
+
+      <div class="form-group">
+        <label>Nombre completo</label>
+        <input type="text" id="reg-name" placeholder="Tu nombre">
+      </div>
+
+      <div class="form-group">
+        <label>Código de invitación</label>
+        <input type="text" id="reg-code" placeholder="Ej: AMIRA-XXXX" style="text-transform:uppercase;" oninput="this.value=this.value.toUpperCase()">
+      </div>
+
+      <div class="form-group">
+        <label>Crea tu PIN (4 dígitos)</label>
+        <input type="password" id="reg-pin" placeholder="••••" maxlength="4" inputmode="numeric">
+      </div>
+
+      <button class="btn btn-gold btn-full" onclick="app.register()" style="margin-bottom:12px;">
+        <i class="fas fa-user-plus"></i> Crear Cuenta
+      </button>
+
+      <div class="login-switch">
+        <a onclick="app.showPinMode()">← Volver al login</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     APP PRINCIPAL
+════════════════════════════════════════ -->
+<div id="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-icon"><i class="fas fa-crown"></i></div>
+        <div>
+          <h1>AMIRA AL DAHAB</h1>
+          <p>Fundación & Finanzas</p>
+        </div>
+      </div>
+      <div class="user-badge">
+        <div class="user-avatar" id="sidebarAvatar">AG</div>
+        <div class="user-info">
+          <strong id="sidebarName">Anthony</strong>
+          <span id="sidebarRole">Administrador</span>
+        </div>
+        <span class="role-badge role-admin" id="sidebarRoleBadge">Admin</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Principal</div>
+      <button class="nav-link active" id="nl-vault" onclick="app.showTab('vault',this)">
+        <i class="fas fa-vault"></i> Bóveda Principal
+        <span class="badge" id="badge-pends" style="display:none;">0</span>
+      </button>
+      <button class="nav-link" id="nl-reg" onclick="app.showTab('reg',this)">
+        <i class="fas fa-user-plus"></i> Registrar Nuevo
+      </button>
+      <button class="nav-link" id="nl-calc" onclick="app.showTab('calc',this)">
+        <i class="fas fa-calculator"></i> Proyector Fiscal
+      </button>
+
+      <div class="nav-section-label">Equipo</div>
+      <button class="nav-link" id="nl-team" onclick="app.showTab('team',this)">
+        <i class="fas fa-sitemap"></i> Mi Equipo
+      </button>
+      <button class="nav-link" id="nl-sig" onclick="app.showTab('sig',this)">
+        <i class="fas fa-signature"></i> Firma Oficial
+      </button>
+
+      <div class="nav-section-label">Reportes</div>
+      <button class="nav-link" onclick="app.exportData()">
+        <i class="fas fa-file-excel"></i> Exportar CSV
+      </button>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <button class="btn-logout" onclick="app.logout()">
+        <i class="fas fa-power-off"></i> Cerrar Sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-content" id="mainContent">
+
+    <!-- Mobile Header -->
+    <div id="mobileHeader">
+      <div class="mobile-brand">
+        <div class="mobile-brand-icon"><i class="fas fa-crown"></i></div>
+        <span>AMIRA</span>
+      </div>
+      <div class="mobile-user-avatar" id="mobileAvatar" onclick="app.logout()">AG</div>
+    </div>
+
+    <!-- Topbar (PC) -->
+    <div class="topbar">
+      <h2 id="topbarTitle">Bóveda Principal</h2>
+      <div class="topbar-actions">
+        <button class="btn btn-ghost btn-sm" onclick="app.exportData()">
+          <i class="fas fa-download"></i> Exportar
+        </button>
+      </div>
+    </div>
+
+    <!-- Page area -->
+    <div class="page-area" id="pageArea">
+
+      <!-- ── TAB: BÓVEDA ── -->
+      <div id="tab-vault" class="tab-content active">
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-check-double"></i></div>
+            <div class="stat-label">Completados</div>
+            <div class="stat-value" id="s-count">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-coins"></i></div>
+            <div class="stat-label">Capital Neto</div>
+            <div class="stat-value" id="s-neto">$0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-receipt"></i></div>
+            <div class="stat-label">Retenciones</div>
+            <div class="stat-value" id="s-tax">$0</div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i class="fas fa-hourglass-half"></i> En Espera de Pago</div>
+            </div>
+            <div id="pends-list" class="item-list"></div>
+            <div id="emptyPends" class="empty-state">
+              <i class="fas fa-inbox"></i>
+              <p>Sin registros pendientes</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i class="fas fa-circle-check" style="color:var(--success)"></i> Historial de Hoy</div>
+            </div>
+            <div id="history-list" class="item-list"></div>
+            <div id="emptyHistory" class="empty-state">
+              <i class="fas fa-inbox"></i>
+              <p>Sin desembolsos completados</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB: REGISTRAR ── -->
+      <div id="tab-reg" class="tab-content">
+        <div class="card" style="max-width:600px;">
+          <div class="card-header">
+            <div class="card-title"><i class="fas fa-file-pen"></i> Expediente de Beneficiario</div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nombre y Apellidos *</label>
+              <input type="text" id="r-nom" placeholder="Juan Carlos Pérez">
+            </div>
+            <div class="form-group">
+              <label>Dirección (RD) *</label>
+              <input type="text" id="r-dir" placeholder="Calle Principal 123, SD">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Monto Bruto (DOP) *</label>
+              <input type="number" id="r-mon" placeholder="50000" min="0" step="100" oninput="app.previewFiscal()">
+            </div>
+            <div class="form-group">
+              <label>Prioridad</label>
+              <select id="r-prio">
+                <option value="">Estándar</option>
+                <option value="priority-high">Urgente</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Vista previa fiscal -->
+          <div id="reg-fiscal-preview" style="margin-bottom:16px;display:none;">
+            <div class="fiscal-breakdown">
+              <div class="fiscal-row"><span>Monto Bruto</span><strong id="fp-bruto">$0</strong></div>
+              <div class="fiscal-row"><span id="fp-tasa-label">Tasa (2%)</span><strong id="fp-tasa" style="color:var(--warning)">-$0</strong></div>
+              <div class="fiscal-row total"><span>A Entregar</span><strong id="fp-neto">$0</strong></div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Descripción / Concepto</label>
+            <textarea id="r-desc" placeholder="Detalles del desembolso..."></textarea>
+          </div>
+
+          <button class="btn btn-gold btn-full" onclick="app.saveLead()">
+            <i class="fas fa-save"></i> Registrar y Generar Folio
+          </button>
+        </div>
+
+        <div style="margin-top:28px;">
+          <div class="card-title" style="margin-bottom:16px;font-family:'Cinzel',serif;font-size:0.95rem;">
+            <i class="fas fa-list" style="color:var(--gold)"></i> Pendientes de Aprobación
+          </div>
+          <div id="leads-list" class="item-list"></div>
+          <div id="emptyLeads" class="empty-state">
+            <i class="fas fa-circle-check"></i>
+            <p>Todos los registros han sido aprobados</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB: CALCULADORA ── -->
+      <div id="tab-calc" class="tab-content">
+        <div class="card" style="max-width:500px;">
+          <div class="card-header">
+            <div class="card-title"><i class="fas fa-magnifying-glass-dollar"></i> Calculadora Fiscal</div>
+          </div>
+
+          <div class="form-group">
+            <label>Monto Bruto (DOP)</label>
+            <input type="number" id="sim-monto" placeholder="Ingrese cantidad" min="0" step="100" oninput="app.simular()">
+          </div>
+
+          <div id="sim-res" class="calc-result">
+            <span style="color:var(--text-light);font-size:0.85rem;">Ingrese un monto para ver la simulación</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB: EQUIPO ── -->
+      <div id="tab-team" class="tab-content">
+
+        <div class="invite-card" id="inviteCard">
+          <h3>Tu Código de Invitación</h3>
+          <div class="invite-code" id="myInviteCode">AMIRA-XXXX</div>
+          <div class="invite-url" id="myInviteUrl">Cargando...</div>
+          <div class="invite-actions">
+            <button class="btn-invite-action" onclick="app.copyInviteCode()">
+              <i class="fas fa-copy"></i> Copiar código
+            </button>
+            <button class="btn-invite-action" onclick="app.shareInvite()">
+              <i class="fas fa-share-nodes"></i> Compartir link
+            </button>
+            <button class="btn-invite-action" onclick="app.copyInviteUrl()">
+              <i class="fas fa-link"></i> Copiar link
+            </button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="fas fa-sitemap"></i> Árbol de Mi Equipo</div>
+            <span id="team-count" style="font-size:0.8rem;color:var(--text-light);">0 miembros</span>
+          </div>
+          <div id="teamTree" class="team-tree"></div>
+          <div id="emptyTeam" class="empty-state">
+            <i class="fas fa-users"></i>
+            <p>Aún no tienes miembros en tu equipo. Comparte tu código para invitar.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB: FIRMA ── -->
+      <div id="tab-sig" class="tab-content">
+        <div class="card" style="max-width:500px;">
+          <div class="card-header">
+            <div class="card-title"><i class="fas fa-signature"></i> Configuración Jurídica</div>
+          </div>
+
+          <div class="form-group">
+            <label>Nombre del Representante Autorizado</label>
+            <input type="text" id="sig-name" placeholder="Lic. Marcial Guerrero" oninput="app.previewSignature()">
+          </div>
+
+          <div class="signature-preview">
+            <div class="sig-text" id="sig-preview">Firma</div>
+            <small>Vista previa de firma</small>
+          </div>
+
+          <button class="btn btn-gold btn-full" onclick="app.updateSignature()">
+            <i class="fas fa-check"></i> Guardar Configuración
+          </button>
+        </div>
+      </div>
+
+    </div><!-- /page-area -->
+  </div><!-- /main-content -->
+</div><!-- /app -->
+
+
+<!-- ════════════════════════════════════════
+     BOTTOM NAV (MÓVIL)
+════════════════════════════════════════ -->
+<div id="bottomNav">
+  <div class="bn-inner">
+    <button class="bn-item active" id="bn-vault" onclick="app.showTabMobile('vault','bn-vault')">
+      <i class="fas fa-vault"></i><span>Bóveda</span>
+    </button>
+    <button class="bn-item" id="bn-reg" onclick="app.showTabMobile('reg','bn-reg')">
+      <i class="fas fa-user-plus"></i><span>Registrar</span>
+    </button>
+    <button class="bn-item" id="bn-calc" onclick="app.showTabMobile('calc','bn-calc')">
+      <i class="fas fa-calculator"></i><span>Fiscal</span>
+    </button>
+    <button class="bn-item" id="bn-team" onclick="app.showTabMobile('team','bn-team')">
+      <i class="fas fa-sitemap"></i><span>Equipo</span>
+    </button>
+    <button class="bn-item" id="bn-sig" onclick="app.showTabMobile('sig','bn-sig')">
+      <i class="fas fa-signature"></i><span>Firma</span>
+    </button>
+    <button class="bn-item bn-danger" onclick="app.logout()">
+      <i class="fas fa-power-off"></i><span>Salir</span>
+    </button>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     MODAL PAGO
+════════════════════════════════════════ -->
+<div class="modal-overlay" id="payModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="pay-title">Detalles de Desembolso</h3>
+      <button class="modal-close-btn" onclick="app.closeModal('payModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div id="pay-body"></div>
+      <div class="fiscal-breakdown" id="pay-fiscal"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-gold" id="btn-pay"><i class="fas fa-money-bill"></i> Ejecutar Pago</button>
+      <button class="btn btn-ghost" id="btn-ticket"><i class="fas fa-ticket"></i> Ticket</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     SCRIPT PRINCIPAL
+════════════════════════════════════════ -->
+<script>
+// ════════════════════════════════════════
+// CONFIGURACIÓN
+// ════════════════════════════════════════
+const API = '/.netlify/functions';
+const TAX = { standard: 0.02, high: 0.03, threshold: 50000 };
+const SITE_URL = window.location.origin;
+
+// ════════════════════════════════════════
+// APP CLASS
+// ════════════════════════════════════════
+class AMIRAApp {
+  constructor() {
+    this.session = null;          // { id, name, role, invite_code, parent_id }
+    this.data = { pends: [], history: [], leads: [], signer: 'AMIRA AL DAHAB' };
+    this.currentPendId = null;
+    this.pinBuffer = '';
+    this.init();
+  }
+
+  // ──────────────────────────────────────
+  // INIT
+  // ──────────────────────────────────────
+  init() {
+    // Prefill invite code from URL
+    const params = new URLSearchParams(window.location.search);
+    const inviteParam = params.get('invite') || params.get('ref');
+    if (inviteParam) {
+      document.getElementById('reg-code').value = inviteParam.toUpperCase();
+      this.showRegisterMode();
+    }
+
+    // Check saved session
+    const saved = localStorage.getItem('amira_session');
+    if (saved) {
+      try {
+        this.session = JSON.parse(saved);
+        this.enterApp();
+      } catch(e) {
+        localStorage.removeItem('amira_session');
+      }
+    }
+
+    window.addEventListener('resize', () => this.handleResize());
+  }
+
+  // ──────────────────────────────────────
+  // PIN KEYPAD
+  // ──────────────────────────────────────
+  pinKey(digit) {
+    if (this.pinBuffer.length >= 4) return;
+    this.pinBuffer += digit;
+    this.updatePinDots();
+    if (this.pinBuffer.length === 4) {
+      setTimeout(() => this.pinSubmit(), 150);
+    }
+  }
+
+  pinClear() {
+    this.pinBuffer = this.pinBuffer.slice(0, -1);
+    this.updatePinDots();
+  }
+
+  updatePinDots() {
+    for (let i = 0; i < 4; i++) {
+      document.getElementById('pd' + i).classList.toggle('filled', i < this.pinBuffer.length);
+    }
+  }
+
+  async pinSubmit() {
+    if (this.pinBuffer.length < 4) { this.toast('Ingresa los 4 dígitos', 'warning'); return; }
+    this.showLoading();
+    try {
+      const res = await fetch(`${API}/auth-login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: this.pinBuffer })
+      });
+      const data = await res.json();
+      if (data.user) {
+        this.session = data.user;
+        localStorage.setItem('amira_session', JSON.stringify(this.session));
+        this.enterApp();
+      } else {
+        this.toast(data.error || 'PIN incorrecto', 'danger');
+        this.pinBuffer = '';
+        this.updatePinDots();
+        // Shake animation
+        document.querySelectorAll('.pin-dot').forEach(d => {
+          d.style.animation = 'none';
+          setTimeout(() => d.style.animation = '', 10);
+        });
+      }
+    } catch(e) {
+      this.toast('Error de conexión', 'danger');
+    }
+    this.hideLoading();
+    this.pinBuffer = '';
+    this.updatePinDots();
+  }
+
+  // ──────────────────────────────────────
+  // REGISTER
+  // ──────────────────────────────────────
+  showRegisterMode() {
+    document.getElementById('loginPinMode').style.display = 'none';
+    document.getElementById('loginRegMode').style.display = 'block';
+  }
+
+  showPinMode() {
+    document.getElementById('loginPinMode').style.display = 'block';
+    document.getElementById('loginRegMode').style.display = 'none';
+    this.pinBuffer = '';
+    this.updatePinDots();
+  }
+
+  async register() {
+    const name = document.getElementById('reg-name').value.trim();
+    const code = document.getElementById('reg-code').value.trim().toUpperCase();
+    const pin  = document.getElementById('reg-pin').value.trim();
+
+    if (!name) { this.toast('Ingresa tu nombre', 'warning'); return; }
+    if (!code) { this.toast('Ingresa el código de invitación', 'warning'); return; }
+    if (pin.length !== 4 || !/^\d{4}$/.test(pin)) { this.toast('El PIN debe ser 4 dígitos', 'warning'); return; }
+
+    this.showLoading();
+    try {
+      const res = await fetch(`${API}/auth-register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, invite_code: code, pin })
+      });
+      const data = await res.json();
+      if (data.user) {
+        this.session = data.user;
+        localStorage.setItem('amira_session', JSON.stringify(this.session));
+        this.toast('¡Bienvenido al sistema AMIRA!', 'success');
+        this.enterApp();
+      } else {
+        this.toast(data.error || 'Error al registrar', 'danger');
+      }
+    } catch(e) {
+      this.toast('Error de conexión', 'danger');
+    }
+    this.hideLoading();
+  }
+
+  // ──────────────────────────────────────
+  // ENTER APP
+  // ──────────────────────────────────────
+  enterApp() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').classList.add('active');
+
+    // Update UI with session info
+    const initials = this.getInitials(this.session.name);
+    document.getElementById('sidebarAvatar').textContent = initials;
+    document.getElementById('mobileAvatar').textContent = initials;
+    document.getElementById('sidebarName').textContent = this.session.name;
+    document.getElementById('sidebarRole').textContent = this.session.role === 'admin' ? 'Administrador' : 'Miembro';
+    document.getElementById('sidebarRoleBadge').textContent = this.session.role === 'admin' ? 'Admin' : 'Miembro';
+    document.getElementById('sidebarRoleBadge').className = `role-badge ${this.session.role === 'admin' ? 'role-admin' : 'role-member'}`;
+
+    // Show bottomNav on mobile
+    this.handleResize();
+
+    // Load data
+    this.loadAllData();
+    this.setupInviteCard();
+
+    this.toast(`Bienvenido, ${this.session.name.split(' ')[0]}`, 'success');
+  }
+
+  getInitials(name) {
+    return name.split(' ').slice(0,2).map(w => w[0]).join('').toUpperCase();
+  }
+
+  // ──────────────────────────────────────
+  // INVITE CARD
+  // ──────────────────────────────────────
+  setupInviteCard() {
+    const code = this.session.invite_code || 'AMIRA-????';
+    const url = `${SITE_URL}?invite=${code}`;
+    document.getElementById('myInviteCode').textContent = code;
+    document.getElementById('myInviteUrl').textContent = url;
+  }
+
+  copyInviteCode() {
+    navigator.clipboard.writeText(this.session.invite_code || '');
+    this.toast('Código copiado al portapapeles', 'success');
+  }
+
+  copyInviteUrl() {
+    const url = `${SITE_URL}?invite=${this.session.invite_code}`;
+    navigator.clipboard.writeText(url);
+    this.toast('Link copiado al portapapeles', 'success');
+  }
+
+  shareInvite() {
+    const url = `${SITE_URL}?invite=${this.session.invite_code}`;
+    const text = `Te invito al Sistema AMIRA AL DAHAB. Usa mi código ${this.session.invite_code} o accede aquí: ${url}`;
+    if (navigator.share) {
+      navigator.share({ title: 'AMIRA AL DAHAB', text, url });
+    } else {
+      navigator.clipboard.writeText(text);
+      this.toast('Link copiado (Web Share no disponible)', 'warning');
+    }
+  }
+
+  // ──────────────────────────────────────
+  // DATA LOADING
+  // ──────────────────────────────────────
+  async loadAllData() {
+    this.showLoading();
+    try {
+      const [dashRes, teamRes] = await Promise.all([
+        fetch(`${API}/dashboard`, {
+          headers: { 'x-user-id': this.session.id }
+        }),
+        fetch(`${API}/team`, {
+          headers: { 'x-user-id': this.session.id }
+        })
+      ]);
+      const dash = await dashRes.json();
+      const team = await teamRes.json();
+
+      this.data.pends   = dash.pends   || [];
+      this.data.history = dash.history || [];
+      this.data.leads   = dash.leads   || [];
+      this.data.signer  = dash.signer  || 'AMIRA AL DAHAB';
+      this.data.team    = team.tree    || [];
+
+      document.getElementById('sig-name').value = this.data.signer;
+      this.previewSignature();
+      this.render();
+    } catch(e) {
+      this.toast('Error cargando datos', 'danger');
+      // Fallback to localStorage
+      const local = localStorage.getItem('amira_local');
+      if (local) {
+        const d = JSON.parse(local);
+        this.data = { ...this.data, ...d };
+        this.render();
+      }
+    }
+    this.hideLoading();
+  }
+
+  // ──────────────────────────────────────
+  // SAVE LEAD
+  // ──────────────────────────────────────
+  async saveLead() {
+    const nom  = document.getElementById('r-nom').value.trim();
+    const dir  = document.getElementById('r-dir').value.trim();
+    const mon  = parseFloat(document.getElementById('r-mon').value) || 0;
+    const prio = document.getElementById('r-prio').value;
+    const desc = document.getElementById('r-desc').value.trim();
+
+    if (!nom) { this.toast('Ingresa el nombre', 'warning'); return; }
+    if (!dir) { this.toast('Ingresa la dirección', 'warning'); return; }
+    if (mon <= 0) { this.toast('Ingresa un monto válido', 'warning'); return; }
+
+    this.showLoading();
+    try {
+      const res = await fetch(`${API}/leads`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-user-id': this.session.id },
+        body: JSON.stringify({ nom, dir, mon, prio, desc })
+      });
+      const data = await res.json();
+      if (data.lead) {
+        this.data.leads.unshift(data.lead);
+        this.renderLeads();
+        this.toast(`Folio ${data.lead.folio} generado`, 'success');
+        // Clear form
+        ['r-nom','r-dir','r-mon','r-desc'].forEach(id => document.getElementById(id).value = '');
+        document.getElementById('r-prio').value = '';
+        document.getElementById('reg-fiscal-preview').style.display = 'none';
+      } else {
+        this.toast(data.error || 'Error al registrar', 'danger');
+      }
+    } catch(e) {
+      this.toast('Error de conexión. Guardando local.', 'warning');
+      // Local fallback
+      const rate = mon > TAX.threshold ? TAX.high : TAX.standard;
+      const tax  = mon * rate;
+      const lead = {
+        id: Date.now(), nom, dir, mon, prio, desc,
+        folio: 'AMIRA-' + Date.now().toString().slice(-6),
+        tax, neto: mon - tax,
+        approvedAt: new Date().toLocaleDateString('es-DO')
+      };
+      this.data.leads.unshift(lead);
+      this.renderLeads();
+      this.toast(`Folio ${lead.folio} generado (offline)`, 'success');
+      ['r-nom','r-dir','r-mon','r-desc'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('reg-fiscal-preview').style.display = 'none';
+    }
+    this.hideLoading();
+  }
+
+  // ──────────────────────────────────────
+  // PROMOTE LEAD → PEND
+  // ──────────────────────────────────────
+  async promote(id) {
+    this.showLoading();
+    try {
+      const res = await fetch(`${API}/leads/${id}/approve`, {
+        method: 'POST',
+        headers: { 'x-user-id': this.session.id }
+      });
+      const data = await res.json();
+      if (data.pend) {
+        this.data.leads = this.data.leads.filter(l => l.id !== id);
+        this.data.pends.unshift(data.pend);
+        this.renderLeads();
+        this.renderPending();
+        this.toast('Aprobado y en cola de pago', 'success');
+      }
+    } catch(e) {
+      // local fallback
+      const lead = this.data.leads.find(l => l.id === id);
+      if (lead) {
+        this.data.leads = this.data.leads.filter(l => l.id !== id);
+        this.data.pends.unshift({ ...lead, approvedAt: new Date().toLocaleDateString('es-DO') });
+        this.renderLeads();
+        this.renderPending();
+        this.toast('Aprobado (offline)', 'success');
+      }
+    }
+    this.hideLoading();
+  }
+
+  // ──────────────────────────────────────
+  // MODAL PAGO
+  // ──────────────────────────────────────
+  openModal(id) {
+    const p = this.data.pends.find(x => x.id === id);
+    if (!p) return;
+    this.currentPendId = id;
+
+    document.getElementById('pay-title').textContent = p.nom;
+    document.getElementById('pay-body').innerHTML = `
+      <p style="font-size:0.82rem;color:var(--text-light);margin-bottom:4px;">${p.folio} · ${p.dir}</p>
+      ${p.desc ? `<p style="font-size:0.82rem;margin-bottom:8px;">${p.desc}</p>` : ''}
+    `;
+
+    const rate = p.mon > TAX.threshold ? TAX.high : TAX.standard;
+    const tax  = p.tax || (p.mon * rate);
+    const neto = p.neto || (p.mon - tax);
+
+    document.getElementById('pay-fiscal').innerHTML = `
+      <div class="fiscal-row"><span>Monto Bruto</span><strong>$${p.mon.toLocaleString()}</strong></div>
+      <div class="fiscal-row"><span>Tasa (${(rate*100)}%)</span><strong style="color:var(--warning)">-$${tax.toLocaleString()}</strong></div>
+      <div class="fiscal-row total"><span>A Entregar</span><strong>$${neto.toLocaleString()}</strong></div>
+    `;
+
+    document.getElementById('btn-pay').onclick = () => this.executePay(id);
+    document.getElementById('btn-ticket').onclick = () => this.generateTicket(id);
+
+    document.getElementById('payModal').classList.add('active');
+  }
+
+  closeModal(id) {
+    document.getElementById(id).classList.remove('active');
+  }
+
+  async executePay(id) {
+    this.showLoading();
+    try {
+      const res = await fetch(`${API}/pends/${id}/pay`, {
+        method: 'POST',
+        headers: { 'x-user-id': this.session.id }
+      });
+      const data = await res.json();
+      if (data.history) {
+        this.data.pends = this.data.pends.filter(p => p.id !== id);
+        this.data.history.unshift(data.history);
+        this.renderPending();
+        this.renderHistory();
+        this.updateStats();
+        this.closeModal('payModal');
+        this.toast('Pago ejecutado exitosamente', 'success');
+      }
+    } catch(e) {
+      // local fallback
+      const pend = this.data.pends.find(p => p.id === id);
+      if (pend) {
+        this.data.pends = this.data.pends.filter(p => p.id !== id);
+        this.data.history.unshift({ ...pend, executedAt: new Date().toISOString() });
+        this.renderPending();
+        this.renderHistory();
+        this.updateStats();
+        this.closeModal('payModal');
+        this.toast('Pago ejecutado (offline)', 'success');
+      }
+    }
+    this.hideLoading();
+  }
+
+  generateTicket(id) {
+    const p = this.data.pends.find(x => x.id === id);
+    if (!p) return;
+
+    const canvas = document.getElementById('ticketCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, 800, 1100);
+
+    // Background
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, 800, 1100);
+
+    // Gold header
+    ctx.fillStyle = '#B8860B';
+    ctx.fillRect(0, 0, 800, 180);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 52px Georgia';
+    ctx.textAlign = 'center';
+    ctx.fillText('AMIRA AL DAHAB', 400, 80);
+    ctx.font = '22px Arial';
+    ctx.fillText('Sistema Administrativo Seguro', 400, 125);
+    ctx.fillText('República Dominicana', 400, 158);
+
+    // Info
+    ctx.fillStyle = '#2c3e50';
+    ctx.textAlign = 'left';
+    ctx.font = 'bold 28px Arial';
+    ctx.fillText('COMPROBANTE DE DESEMBOLSO', 60, 240);
+
+    ctx.fillStyle = '#B8860B';
+    ctx.fillRect(60, 255, 680, 3);
+
+    const rows = [
+      ['Beneficiario:', p.nom],
+      ['Folio:', p.folio],
+      ['Dirección:', p.dir],
+      ['Monto Bruto:', `DOP $${p.mon.toLocaleString()}`],
+      ['Retención Fiscal:', `DOP $${(p.tax||0).toLocaleString()}`],
+      ['Monto Neto:', `DOP $${(p.neto||0).toLocaleString()}`],
+      ['Fecha:', p.approvedAt || new Date().toLocaleDateString('es-DO')],
+      ['Representante:', this.data.signer]
+    ];
+
+    ctx.font = '24px Arial';
+    rows.forEach(([label, val], i) => {
+      const y = 310 + i * 64;
+      ctx.fillStyle = '#7f8c8d';
+      ctx.fillText(label, 60, y);
+      ctx.fillStyle = '#2c3e50';
+      ctx.font = 'bold 24px Arial';
+      ctx.fillText(val, 260, y);
+      ctx.font = '24px Arial';
+    });
+
+    // Signature
+    ctx.fillStyle = '#B8860B';
+    ctx.font = 'italic bold 48px Georgia';
+    ctx.textAlign = 'center';
+    ctx.fillText(this.data.signer, 400, 870);
+    ctx.fillStyle = '#B8860B';
+    ctx.fillRect(200, 885, 400, 2);
+    ctx.fillStyle = '#7f8c8d';
+    ctx.font = '20px Arial';
+    ctx.fillText('Firma Autorizada', 400, 918);
+
+    // Download
+    const link = document.createElement('a');
+    link.download = `Ticket_${p.folio}_${p.nom.replace(/\s/g,'_')}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+
+    this.toast('Ticket generado', 'success');
+  }
+
+  // ──────────────────────────────────────
+  // SIMULADOR FISCAL
+  // ──────────────────────────────────────
+  simular() {
+    const monto = parseFloat(document.getElementById('sim-monto').value) || 0;
+    const res = document.getElementById('sim-res');
+    if (monto === 0) {
+      res.innerHTML = '<span style="color:var(--text-light);font-size:0.85rem;">Ingrese un monto para ver la simulación</span>';
+      res.classList.remove('has-result');
+      return;
+    }
+    const rate = monto > TAX.threshold ? TAX.high : TAX.standard;
+    const tax  = monto * rate;
+    const neto = monto - tax;
+    res.classList.add('has-result');
+    res.innerHTML = `
+      <div class="fiscal-breakdown" style="width:100%;">
+        <div class="fiscal-row"><span>Monto Bruto</span><strong>$${monto.toLocaleString()}</strong></div>
+        <div class="fiscal-row"><span>Tasa Aplicable</span><strong style="color:var(--gold)">${(rate*100)}%</strong></div>
+        <div class="fiscal-row"><span>Retención</span><strong style="color:var(--danger)">-$${tax.toLocaleString()}</strong></div>
+        <div class="fiscal-row total"><span>A Entregar</span><strong>$${neto.toLocaleString()}</strong></div>
+      </div>
+    `;
+  }
+
+  previewFiscal() {
+    const monto = parseFloat(document.getElementById('r-mon').value) || 0;
+    const preview = document.getElementById('reg-fiscal-preview');
+    if (monto <= 0) { preview.style.display = 'none'; return; }
+    preview.style.display = 'block';
+    const rate = monto > TAX.threshold ? TAX.high : TAX.standard;
+    const tax  = monto * rate;
+    const neto = monto - tax;
+    document.getElementById('fp-bruto').textContent = `$${monto.toLocaleString()}`;
+    document.getElementById('fp-tasa-label').textContent = `Retención (${rate*100}%)`;
+    document.getElementById('fp-tasa').textContent = `-$${tax.toLocaleString()}`;
+    document.getElementById('fp-neto').textContent = `$${neto.toLocaleString()}`;
+  }
+
+  // ──────────────────────────────────────
+  // FIRMA
+  // ──────────────────────────────────────
+  previewSignature() {
+    const val = document.getElementById('sig-name').value || 'Firma';
+    document.getElementById('sig-preview').textContent = val;
+  }
+
+  async updateSignature() {
+    const name = document.getElementById('sig-name').value.trim();
+    if (!name) { this.toast('Ingresa un nombre', 'warning'); return; }
+    this.data.signer = name.toUpperCase();
+    try {
+      await fetch(`${API}/settings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-user-id': this.session.id },
+        body: JSON.stringify({ signer: this.data.signer })
+      });
+    } catch(e) {}
+    this.toast('Firma actualizada', 'success');
+  }
+
+  // ──────────────────────────────────────
+  // EXPORT
+  // ──────────────────────────────────────
+  exportData() {
+    if (this.data.history.length === 0) { this.toast('Sin datos para exportar', 'warning'); return; }
+    let csv = 'Beneficiario,Folio,Monto Bruto,Retención,Neto,Fecha\n';
+    this.data.history.forEach(h => {
+      csv += `"${h.nom}","${h.folio}",${h.mon},${h.tax||0},${h.neto||0},"${h.executedAt||h.approvedAt}"\n`;
+    });
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `AMIRA_Reporte_${new Date().toISOString().slice(0,10)}.csv`;
+    link.click();
+    this.toast('Reporte exportado', 'success');
+  }
+
+  // ──────────────────────────────────────
+  // RENDER
+  // ──────────────────────────────────────
+  render() {
+    this.renderPending();
+    this.renderHistory();
+    this.renderLeads();
+    this.renderTeam();
+    this.updateStats();
+  }
+
+  updateStats() {
+    const totalNeto = this.data.history.reduce((s,h) => s + (h.neto||0), 0);
+    const totalTax  = this.data.history.reduce((s,h) => s + (h.tax||0), 0);
+    document.getElementById('s-count').textContent = this.data.history.length;
+    document.getElementById('s-neto').textContent  = '$' + totalNeto.toLocaleString();
+    document.getElementById('s-tax').textContent   = '$' + totalTax.toLocaleString();
+
+    const badge = document.getElementById('badge-pends');
+    if (this.data.pends.length > 0) {
+      badge.style.display = 'inline';
+      badge.textContent = this.data.pends.length;
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+
+  renderPending() {
+    const list  = document.getElementById('pends-list');
+    const empty = document.getElementById('emptyPends');
+    if (!this.data.pends.length) { list.innerHTML = ''; empty.style.display = 'block'; return; }
+    empty.style.display = 'none';
+    list.innerHTML = this.data.pends.map(p => `
+      <div class="item ${p.prio||''}" onclick="app.openModal(${p.id})">
+        <div class="item-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+        <div class="item-body">
+          <strong>${p.nom}</strong>
+          <small>${p.folio} · Aprobado: ${p.approvedAt}</small>
+        </div>
+        <div class="item-right">
+          <div class="amount">$${(p.neto||0).toLocaleString()}</div>
+          <small>${p.prio === 'priority-high' ? '⚡ Urgente' : 'Estándar'}</small>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  renderHistory() {
+    const list  = document.getElementById('history-list');
+    const empty = document.getElementById('emptyHistory');
+    if (!this.data.history.length) { list.innerHTML = ''; empty.style.display = 'block'; return; }
+    empty.style.display = 'none';
+    list.innerHTML = this.data.history.map(h => `
+      <div class="item done">
+        <div class="item-icon" style="background:var(--success-bg);color:var(--success)"><i class="fas fa-check-double"></i></div>
+        <div class="item-body">
+          <strong>${h.nom}</strong>
+          <small>${h.folio} · ${new Date(h.executedAt||Date.now()).toLocaleDateString('es-DO')}</small>
+        </div>
+        <div class="item-right">
+          <div class="amount">$${(h.neto||0).toLocaleString()}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  renderLeads() {
+    const list  = document.getElementById('leads-list');
+    const empty = document.getElementById('emptyLeads');
+    if (!this.data.leads.length) { list.innerHTML = ''; empty.style.display = 'block'; return; }
+    empty.style.display = 'none';
+    list.innerHTML = this.data.leads.map(l => `
+      <div class="item ${l.prio||''}">
+        <div class="item-icon" style="background:var(--warning-bg);color:var(--warning)"><i class="fas fa-clock"></i></div>
+        <div class="item-body">
+          <strong>${l.nom}</strong>
+          <small>${l.dir} · $${l.mon.toLocaleString()} DOP</small>
+        </div>
+        <div style="margin-left:auto;display:flex;align-items:center;">
+          <button class="btn btn-success btn-sm" onclick="event.stopPropagation();app.promote(${l.id})">
+            <i class="fas fa-check"></i> Aprobar
+          </button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  renderTeam() {
+    const tree  = document.getElementById('teamTree');
+    const empty = document.getElementById('emptyTeam');
+    const count = document.getElementById('team-count');
+    const team  = this.data.team || [];
+
+    if (!team.length) {
+      tree.innerHTML = '';
+      empty.style.display = 'block';
+      count.textContent = '0 miembros';
+      return;
+    }
+
+    empty.style.display = 'none';
+    const totalCount = this.countMembers(team);
+    count.textContent = `${totalCount} miembro${totalCount !== 1 ? 's' : ''}`;
+    tree.innerHTML = this.renderTreeNodes(team, 0);
+  }
+
+  countMembers(nodes) {
+    return nodes.reduce((sum, n) => sum + 1 + this.countMembers(n.children || []), 0);
+  }
+
+  renderTreeNodes(nodes, depth) {
+    return nodes.map(n => {
+      const initials = this.getInitials(n.name);
+      const children = n.children && n.children.length
+        ? `<div class="tree-children">${this.renderTreeNodes(n.children, depth+1)}</div>`
+        : '';
+      const depthLabels = ['Tú los invitaste', 'Nivel 2', 'Nivel 3', 'Nivel 4'];
+      return `
+        <div class="tree-node">
+          <div class="tree-member depth-${depth}">
+            <div class="tm-avatar">${initials}</div>
+            <div class="tm-info">
+              <strong>${n.name}</strong>
+              <small>Miembro desde ${n.joined || '—'}</small>
+            </div>
+            <div class="tm-meta">
+              <span class="depth-badge depth-${depth}">${depthLabels[depth] || `Nivel ${depth+1}`}</span>
+              ${n.team_count ? `<strong style="display:block;margin-top:4px;font-size:0.72rem;">${n.team_count} en su equipo</strong>` : ''}
+            </div>
+          </div>
+          ${children}
+        </div>
+      `;
+    }).join('');
+  }
+
+  // ──────────────────────────────────────
+  // LOGOUT
+  // ──────────────────────────────────────
+  logout() {
+    if (!confirm('¿Desea cerrar la sesión?')) return;
+    localStorage.removeItem('amira_session');
+    this.session = null;
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('app').classList.remove('active');
+    document.getElementById('bottomNav').style.display = 'none';
+    this.pinBuffer = '';
+    this.updatePinDots();
+    this.showPinMode();
+  }
+
+  // ──────────────────────────────────────
+  // TABS
+  // ──────────────────────────────────────
+  showTab(key, el) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    document.getElementById('tab-' + key).classList.add('active');
+    el.classList.add('active');
+    // Update topbar title
+    const titles = { vault:'Bóveda Principal', reg:'Registrar Nuevo', calc:'Proyector Fiscal', team:'Mi Equipo', sig:'Firma Oficial' };
+    document.getElementById('topbarTitle').textContent = titles[key] || 'AMIRA';
+  }
+
+  showTabMobile(key, btnId) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.bn-item').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    document.getElementById('tab-' + key).classList.add('active');
+    const btn = document.getElementById(btnId);
+    if (btn) btn.classList.add('active');
+  }
+
+  // ──────────────────────────────────────
+  // RESPONSIVE
+  // ──────────────────────────────────────
+  handleResize() {
+    const isMobile = window.innerWidth <= 768;
+    const bn = document.getElementById('bottomNav');
+    if (this.session && document.getElementById('app').classList.contains('active')) {
+      bn.style.display = isMobile ? 'block' : 'none';
+    }
+  }
+
+  // ──────────────────────────────────────
+  // TOAST
+  // ──────────────────────────────────────
+  toast(msg, type = 'info') {
+    const icons = { success: 'fa-circle-check', danger: 'fa-circle-exclamation', warning: 'fa-triangle-exclamation', info: 'fa-circle-info' };
+    const container = document.getElementById('toastContainer');
+    const el = document.createElement('div');
+    el.className = `toast ${type}`;
+    el.innerHTML = `<i class="fas ${icons[type]||icons.info}"></i><span>${msg}</span>`;
+    container.appendChild(el);
+    setTimeout(() => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateX(20px)';
+      el.style.transition = 'all 0.3s';
+      setTimeout(() => el.remove(), 300);
+    }, 3200);
+  }
+
+  // ──────────────────────────────────────
+  // LOADING
+  // ──────────────────────────────────────
+  showLoading() {
+    if (!document.getElementById('loadingOverlay')) {
+      const d = document.createElement('div');
+      d.id = 'loadingOverlay';
+      d.className = 'loading-overlay';
+      d.innerHTML = '<div class="spinner"></div>';
+      document.body.appendChild(d);
+    }
+  }
+
+  hideLoading() {
+    const el = document.getElementById('loadingOverlay');
+    if (el) el.remove();
+  }
+}
+
+// ════════════════════════════════════════
+// BOOT
+// ════════════════════════════════════════
+const app = new AMIRAApp();
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+  }
+});
+</script>
+</body>
+</html>
